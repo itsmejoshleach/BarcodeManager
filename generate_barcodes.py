@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import re
 
-# ——— CONFIG ———
+# Config
 CSV_PATH = "items.csv"
 OUTPUT_DIR = "barcode_images"
 URL_TEMPLATE = "https://barcodeapi.org/api/code128/{}"
@@ -11,13 +11,13 @@ URL_TEMPLATE = "https://barcodeapi.org/api/code128/{}"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def sanitize_filename(name: str) -> str:
-    """Remove characters that are invalid in filenames."""
+    #Remove characters that are invalid in filenames.
     name = name.strip()
     name = re.sub(r'[\\/:*?"<>|]', '', name)
     return name
 
 def download_barcode_image(barcode: str, item_name: str) -> bool:
-    """Download the barcode image for a given barcode."""
+    #Download the barcode image for a given barcode.
     # Format barcode with 2 decimal places
     try:
         barcode_float = float(barcode)
