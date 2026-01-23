@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Item Search</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        input { padding: 8px; font-size: 16px; width: 300px; }
+        button { padding: 8px 14px; font-size: 16px; }
+        img { max-width: 300px; margin-top: 10px; border: 1px solid #ccc; }
+        .item { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; }
+        .flash { margin-top: 20px; padding: 10px; border-radius: 4px; }
+        .warning { background-color: #fff3cd; }
+        .danger { background-color: #f8d7da; }
+    </style>
+</head>
+<body>
+
+<h1>Search Items</h1>
+
+<form method="POST">
+    <input type="text" name="search" placeholder="Name, description, or barcode" value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% for item in results %}
+<div class="item">
+    <h2>{{ item.name }}</h2>
+    <p><strong>Description:</strong> {{ item.description }}</p>
+    <p><strong>Barcode:</strong> {{ item.barcode }}</p>
+
+    {% if item.barcode_image %}
+        <h4>Barcode Image</h4>
+        <img src="{{ url_for('barcode_image', filename=item.barcode_image) }}">
+    {% endif %}
+
+    {% if item.label_image %}
+        <h4>Label</h4>
+        <img src="{{ url_for('label_image', filename=item.label_image) }}">
+    {% endif %}
+</div>
+{% endfor %}
+
+</body>
+</html>

@@ -2,7 +2,7 @@ import os
 from PIL import Image
 
 # ——— CONFIG ———
-LABEL_DIR = "labels"        # Folder with label images
+LABEL_DIR = "static/labels"        # Folder with label images
 OUTPUT_PDF = "labels.pdf"   # Output PDF filename
 
 def main():

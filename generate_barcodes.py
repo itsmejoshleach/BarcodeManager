@@ -5,7 +5,7 @@ import re
 
 # Config
 CSV_PATH = "items.csv"
-OUTPUT_DIR = "barcode_images"
+OUTPUT_DIR = "static/barcode_images"
 URL_TEMPLATE = "https://barcodeapi.org/api/code128/{}"
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)

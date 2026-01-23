@@ -6,7 +6,7 @@ import re
 # CONFIG
 CSV_PATH = "items.csv" # CSV file with item names
 BARCODE_DIR = "barcode_images" # Folder containing barcode images
-LABEL_DIR = "labels" # Folder to save generated labels
+LABEL_DIR = "static/labels" # Folder to save generated labels
 
 # Label size in MILLIMETERS
 LABEL_WIDTH_MM = 50
