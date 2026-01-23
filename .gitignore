@@ -40,7 +40,7 @@ secrets.json
 *.crt
 
 # Project Specific Files
-logo.png
+Generic Product Barcodes.xlsx
 labels.pdf
 items.csv
 barcode_images/
