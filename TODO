@@ -1,1 +1,3 @@
-☐ Create A Flask webpage that allows for searching the db, and pulls up the images to scan
+✔ Create A Flask webpage that allows for searching the db, and pulls up the images to scan @done(26-01-26 08:01)
+☐ Have the ability to upload a csv file of items
+☐ generate labels & barcodes automatically when you upload a csv

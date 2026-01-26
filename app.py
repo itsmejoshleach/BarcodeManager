@@ -65,5 +65,5 @@ def barcode_image(filename):
 def label_image(filename):
     return send_from_directory(LABEL_DIR, filename)
 
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)   

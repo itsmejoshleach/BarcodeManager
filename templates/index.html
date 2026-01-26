@@ -37,10 +37,12 @@
     <p><strong>Description:</strong> {{ item.description }}</p>
     <p><strong>Barcode:</strong> {{ item.barcode }}</p>
 
+    <!--
     {% if item.barcode_image %}
         <h4>Barcode Image</h4>
         <img src="{{ url_for('barcode_image', filename=item.barcode_image) }}">
     {% endif %}
+    -->
 
     {% if item.label_image %}
         <h4>Label</h4>
