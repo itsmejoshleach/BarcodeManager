@@ -1,52 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Item Search</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        input { padding: 8px; font-size: 16px; width: 300px; }
-        button { padding: 8px 14px; font-size: 16px; }
-        img { max-width: 300px; margin-top: 10px; border: 1px solid #ccc; }
-        .item { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; }
-        .flash { margin-top: 20px; padding: 10px; border-radius: 4px; }
-        .warning { background-color: #fff3cd; }
-        .danger { background-color: #f8d7da; }
-    </style>
+<meta charset="UTF-8">
+<title>Item Search</title>
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+body { font-family: Arial; margin: 40px; }
+input { padding: 8px; font-size: 16px; }
+button { padding: 8px 14px; font-size: 16px; margin-left: 4px; }
+img { max-width: 300px; margin-top: 10px; border: 1px solid #ccc; }
+.item { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; }
+#addItemPopup { display:none; position: fixed; top:50%; left:50%; transform: translate(-50%,-50%);
+                background:#fff; padding:20px; border:1px solid #333; z-index:10; }
+#overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:5; }
+</style>
 </head>
+
 <body>
 
-<h1>Search Items</h1>
+<h1>Item Search</h1>
 
-<form method="POST">
+<!-- SEARCH FORM -->
+<form method="POST" action="/">
     <input type="text" name="search" placeholder="Name, description, or barcode" value="{{ query }}">
     <button type="submit">Search</button>
 </form>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="flash {{ category }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+<!-- ADD ITEM BUTTON -->
+<button id="addItemBtn">Add Item</button>
 
-{% for item in results %}
+<div id="overlay"></div>
+
+<!-- ADD ITEM POPUP -->
+<div id="addItemPopup">
+    <h3>Add New Item</h3>
+    <form method="POST" action="/add">
+        <input type="text" name="name" placeholder="Item Name" required><br><br>
+        <input type="text" name="description" placeholder="Description"><br><br>
+        <input type="text" name="barcode" placeholder="Barcode Number" required><br><br>
+        <button type="submit">Add Item</button>
+        <button type="button" id="cancelBtn">Cancel</button>
+    </form>
+</div>
+
+<script>
+const popup = document.getElementById('addItemPopup');
+const overlay = document.getElementById('overlay');
+document.getElementById('addItemBtn').onclick = () => { popup.style.display='block'; overlay.style.display='block'; };
+document.getElementById('cancelBtn').onclick = () => { popup.style.display='none'; overlay.style.display='none'; };
+overlay.onclick = () => { popup.style.display='none'; overlay.style.display='none'; };
+</script>
+
+<hr>
+
+<!-- ITEM LIST -->
+{% for item in items %}
 <div class="item">
     <h2>{{ item.name }}</h2>
     <p><strong>Description:</strong> {{ item.description }}</p>
     <p><strong>Barcode:</strong> {{ item.barcode }}</p>
-
-    <!--
-    {% if item.barcode_image %}
-        <h4>Barcode Image</h4>
-        <img src="{{ url_for('barcode_image', filename=item.barcode_image) }}">
-    {% endif %}
-    -->
-
-    {% if item.label_image %}
-        <h4>Label</h4>
-        <img src="{{ url_for('label_image', filename=item.label_image) }}">
+    {% if item.label %}
+        <img src="{{ url_for('static', filename=item.label) }}" alt="Label">
     {% endif %}
 </div>
 {% endfor %}
