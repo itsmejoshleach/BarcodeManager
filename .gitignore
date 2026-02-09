@@ -40,8 +40,12 @@ secrets.json
 *.crt
 
 # Project Specific Files
+temp_migrate.py
 Generic Product Barcodes.xlsx
 labels.pdf
 items.csv
 barcode_images/
 labels/
+custom_barcodes.csv
+custom_barcode_images/
+custom_labels/

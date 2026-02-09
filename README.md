@@ -1,131 +1,131 @@
-# Barcode Label Generator
+# Inventory & Custom Barcode Management App
 
-This project generates printable barcode labels from a CSV file.  
-It works in **three stages**:
-
-1. Download barcode images from an API  
-2. Generate label images with barcodes + item names  
-3. Combine all labels into a single PDF for printing.
-    - Please note you can also select which labels to print by printing the label images directly.
-
-Designed for high-DPI label printers and inventory-style workflows.
+A web-based internal inventory management system built with **Flask**, **Python**, and **Bootstrap**, designed for **Creative Technology Group (CT) Intranet use**.  
+It allows you to manage items, generate barcodes, create printable labels, and handle custom barcodes, with support for wildcard search.
 
 ---
 
-## Project Structure
+## Features
 
-.
-├── items.csv # Input CSV file
-├── barcode_images/ # Downloaded barcode PNGs
-├── labels/ # Generated label PNGs
-├── labels.pdf # Final combined PDF
-├── download_barcodes.py # Script 1: Download barcodes
-├── create_labels.py # Script 2: Create label images
-├── make_pdf.py # Script 3: Combine labels into PDF
-├── monofonto rg.otf # Font used for label text
-└── README.md
+- **Item Search**
+  - Search inventory by name, description, or barcode
+  - Supports wildcard searches (e.g., `ABC*` or `*123`)
+  - View barcode labels directly in the browser
+  - Print barcode labels with a single click
+
+- **Custom Barcodes**
+  - Add custom barcodes not tied to standard items
+  - Generate and print custom labels
+  - Delete individual labels or clear all custom barcodes
+  - Supports wildcard search
+
+- **Barcode & Label Generation**
+  - Generates **Code128 barcodes** via [barcodeapi.org](https://barcodeapi.org/)
+  - Creates **50mm × 25mm printable labels** with item name and barcode
+  - Handles both standard items and custom barcodes
+
+- **Polling**
+  - Placeholder page for job polling and notifications
+
+- **CSV-Based Storage**
+  - Items and custom barcodes are stored in `items.csv` and `custom_barcodes.csv`
+  - Automatically creates CSV files if missing
+  - All barcode images and labels stored in `static/` directories
+
+---
+
+## Directory Structure
+
+BarcodeGenerator/
+│
+├─ app.py # Main Flask application
+├─ items.csv # Standard inventory CSV
+├─ custom_barcodes.csv # Custom barcode CSV
+├─ monofonto rg.otf # Font used for labels
+├─ templates/
+│ ├─ base_layout.html
+│ ├─ index.html
+│ ├─ custom_barcodes.html
+│ └─ polling.html
+├─ static/
+│ ├─ barcode_images/ # Generated barcode images
+│ ├─ labels/ # Standard labels
+│ ├─ custom_barcodes/ # Custom barcode images
+│ ├─ custom_labels/ # Custom labels
+│ └─ icon.png
+└─ README.md
 
 
 ---
 
-## Requirements
+## Installation
 
-- Python 3.9+
-- Internet connection (for barcode downloads)
+1. Clone the repository
+```
+git clone https://github.com/itsmejoshleach/BarcodeGenerator.git
+cd BarcodeGenerator
+```
+2. Create a virtual environment
+```
+python -m venv venv
+source venv/bin/activate   # Linux / macOS
+venv\Scripts\activate      # Windows
+```
 
-### Python dependencies
+3. Install dependencies
+```
+pip install -r requirements.txt
+```
+
+requirements.txt should include:
 
 ```
-pip install pandas requests pillow
+Flask
+pandas
+requests
+Pillow
 ```
-### Input CSV Format
-Your items.csv must contain the following columns:
 
-### Column Name	
-```Description, Barcode Number, Barcode value (numeric or text), Item Name, Name printed on the label```
+4. Ensure directories exist
+The app will automatically create necessary directories in static/ on first run.
 
-#### Example:
+## Usage:
+### Run the app
+`python app.py`
 
-```Barcode Number,Item Name```
+### Access in browser
+`http://127.0.0.1:5000/`
 
-```12345678,Widget A```
+## Features
 
-```98765432,Widget B```
+- Add Item: Click the + Add Item button in Item Search.
 
-## Script Overview
-### 1️⃣ Download Barcode Images
-File: download_barcodes.py
+- Search Items: Use the search bar with wildcards (*) to filter items.
 
-Reads items.csv
+- Print Labels: Click Print Label to open a printable view.
 
-Downloads Code128 barcode images from barcodeapi.org
+- Custom Barcodes: Go to the Custom Barcodes tab to add or manage custom barcodes.
 
-Saves images as PNGs in barcode_images/
+- Delete Labels: Delete individual labels or clear all custom barcodes from CSV and disk.
 
-Filenames are based on sanitized item names
+## Notes
+- Labels are generated at 300 DPI, 50mm × 25mm size.
 
-Run:
+- Barcodes are retrieved from barcodeapi.org as PNGs.
 
-`python download_barcodes.py`
+- Font for labels is monofonto rg.otf; adjust FONT_PATH in app.py if needed.
 
-### 2️⃣ Create Label Images
-File: create_labels.py
+- Wildcard searches use * to match any characters.
 
-Creates 50mm × 25mm labels at 300 DPI
+## License
+- This project is for internal company/intranet use only.
+© 2025-2026 Josh Leach
 
-Layout:
+## Future Improvements
+- Implement polling page with live job notifications.
 
-Top 2/3: barcode image
+- Add bulk CSV import/export.
 
-Bottom 1/3: item name (auto-scaled to fit)
+- Add user authentication for access control.
 
-Outputs black & white label PNGs to labels/
-
-Font:
-
-Uses monofonto rg.otf (must exist in project root)
-
-Run:
-
-`python create_labels.py`
-
-### 3️⃣ Combine Labels into a PDF
-File: make_pdf.py
-
-Reads all PNG files from labels/
-
-Combines them into a single multi-page PDF
-
-Outputs labels.pdf
-
-Run:
-
-`python generate_pdf.py`
-
-
-## Label Specifications
-Size: 50mm × 25mm (but can be changed in script)
-
-Resolution: 300 DPI
-
-Color mode: Black & White (1-bit)
-
-Optimized for: Thermal / label printers
-
-## Notes & Tips
-Item names are auto-scaled horizontally to prevent overflow
-
-Missing barcodes or images are skipped with warnings
-
-Filenames are sanitized to avoid OS issues
-
-Barcode values are formatted to 2 decimal places when numeric
-
-## Typical Workflow
-`python download_barcodes.py`
-
-`python create_labels.py`
-
-`python make_pdf.py`
-
-After this, labels.pdf is ready to print. 🏷️
+- Improve label styling with additional templates or QR codes.

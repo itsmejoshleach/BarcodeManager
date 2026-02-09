@@ -16,7 +16,7 @@ CUSTOM_CSV = "./custom_barcodes.csv"
 
 BARCODE_DIR = "static/barcode_images"
 LABEL_DIR = "static/labels"
-CUSTOM_BARCODE_DIR = "static/custom_barcodes"
+CUSTOM_BARCODE_DIR = "static/custom_barcode_images"
 CUSTOM_LABEL_DIR = "static/custom_labels"
 
 BARCODE_API = "https://barcodeapi.org/api/code128/{}"
@@ -48,7 +48,6 @@ PADDING = mm_to_px(PADDING_MM)
 TEXT_HEIGHT = int(LABEL_HEIGHT * TEXT_HEIGHT_FRACTION)
 
 def sanitize_filename(name):
-    # Replace all unsafe characters (including spaces) with _
     return re.sub(r'[\\/:*?"<>| ]+', '_', name).strip()
 
 def ensure_csv(path, columns):
@@ -59,18 +58,22 @@ def ensure_csv(path, columns):
 # ------------------------
 # LOAD ITEMS
 # ------------------------
+def wildcard_to_regex(query):
+    return re.escape(query).replace("\\*", ".*")
+
 def load_items(query=""):
     ensure_csv(ITEMS_CSV, CSV_COLUMNS)
-    df = pd.read_csv(ITEMS_CSV).fillna("")
-    df["Item Name"] = df["Item Name"].astype(str).str.strip()
-    df["Item Description / Alternate Names"] = df["Item Description / Alternate Names"].astype(str).str.strip()
-    df["Barcode Number"] = df["Barcode Number"].astype(str).str.strip()
+    df = pd.read_csv(ITEMS_CSV, dtype=str).fillna("")
+    df["Item Name"] = df["Item Name"].str.strip()
+    df["Item Description / Alternate Names"] = df["Item Description / Alternate Names"].str.strip()
+    df["Barcode Number"] = df["Barcode Number"].str.strip()
 
     if query:
+        regex_query = wildcard_to_regex(query)
         df = df[
-            df["Item Name"].str.contains(query, case=False) |
-            df["Item Description / Alternate Names"].str.contains(query, case=False) |
-            df["Barcode Number"].str.contains(query, case=False)
+            df["Item Name"].str.contains(regex_query, case=False, regex=True) |
+            df["Item Description / Alternate Names"].str.contains(regex_query, case=False, regex=True) |
+            df["Barcode Number"].str.contains(regex_query, case=False, regex=True)
         ]
 
     items = []
@@ -89,14 +92,15 @@ def load_items(query=""):
 
 def load_custom_barcodes(query=""):
     ensure_csv(CUSTOM_CSV, CUSTOM_COLUMNS)
-    df = pd.read_csv(CUSTOM_CSV).fillna("")
-    df["Name"] = df["Name"].astype(str).str.strip()
-    df["Barcode"] = df["Barcode"].astype(str).str.strip()
+    df = pd.read_csv(CUSTOM_CSV, dtype=str).fillna("")
+    df["Name"] = df["Name"].str.strip()
+    df["Barcode"] = df["Barcode"].str.strip()
 
     if query:
+        regex_query = wildcard_to_regex(query)
         df = df[
-            df["Name"].str.contains(query, case=False) |
-            df["Barcode"].str.contains(query, case=False)
+            df["Name"].str.contains(regex_query, case=False, regex=True) |
+            df["Barcode"].str.contains(regex_query, case=False, regex=True)
         ]
 
     items = []
@@ -190,7 +194,6 @@ def custom_barcodes():
     if request.method=="POST":
         query = request.form.get("search","").strip()
         if request.form.get("clear")=="1":
-            # clear all custom barcodes
             items = load_custom_barcodes()
             for i in items:
                 try:
@@ -227,7 +230,6 @@ def delete_label():
     if not filepath:
         return "Missing filepath",400
 
-    # delete label file
     try:
         os.remove(os.path.join("static", filepath))
     except FileNotFoundError:
@@ -242,13 +244,11 @@ def delete_label():
         csv_path = CUSTOM_CSV
         png_dir = CUSTOM_BARCODE_DIR
 
-    # delete barcode png
     try:
         os.remove(os.path.join(png_dir,f"{safe_name}.png"))
     except FileNotFoundError:
         pass
 
-    # remove from CSV
     df = pd.read_csv(csv_path)
     if page_type=="items":
         df = df[df["Item Name"].str.strip() != name]

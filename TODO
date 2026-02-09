@@ -6,5 +6,6 @@ Add barcodes:
     1.3m ECon
     
 ✔ Add "Items" as page in navbar @done(26-02-09 23:20)
-☐ Add job watcher (pol for job confirmation / unlocking)
+☐ Add job watcher (poll for job confirmation / unlocking)
+☐ Add job watcher (poll for changes in items)
 ☐ Add stock check function using EJ API
