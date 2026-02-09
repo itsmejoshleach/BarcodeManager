@@ -36,7 +36,7 @@ It allows you to manage items, generate barcodes, create printable labels, and h
 
 ## Directory Structure
 
-BarcodeGenerator/
+BarcodeManager/
 │
 ├─ app.py # Main Flask application
 ├─ items.csv # Standard inventory CSV
@@ -62,8 +62,8 @@ BarcodeGenerator/
 
 1. Clone the repository
 ```
-git clone https://github.com/itsmejoshleach/BarcodeGenerator.git
-cd BarcodeGenerator
+git clone https://github.com/itsmejoshleach/BarcodeManager.git
+cd BarcodeManager
 ```
 2. Create a virtual environment
 ```
